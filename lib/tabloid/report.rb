@@ -105,8 +105,6 @@ module Tabloid::Report
         <header>
         </header>
         <body>
-          <h1>%s</h1>
-          <h1>%s</h1>
           <div id='report'>
             %s
           </div>
@@ -158,7 +156,6 @@ module Tabloid::Report
 
     def params_csv
       FasterCSV.generate do |csv|
-        csv << [self.provider.name]
         formatted_parameters.to_a.each{ |report_param| csv << report_param }
         csv << []
       end
@@ -184,7 +181,7 @@ module Tabloid::Report
     private
 
     def to_complete_html
-      HTML_FRAME % [self.name, self.provider.name, self.to_html]
+      HTML_FRAME % [ self.to_html]
     end
 
     def cache_data(data)
