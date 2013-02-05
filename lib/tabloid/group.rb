@@ -55,7 +55,7 @@ class Tabloid::Group
 
     cols = [header_content]
     (@visible_column_count-1).times{ cols << nil}
-    FasterCSV.generate{|csv| csv<<cols}
+    CSV.generate{|csv| csv<<cols}
   end
 
   def header_row_html

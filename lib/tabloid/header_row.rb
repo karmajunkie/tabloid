@@ -5,7 +5,7 @@ class Tabloid::HeaderRow
   end
 
   def to_csv
-    FasterCSV.generate{|csv| csv << to_a}
+    CSV.generate{|csv| csv << to_a}
   end
 
   def to_html(options={})

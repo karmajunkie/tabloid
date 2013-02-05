@@ -14,7 +14,7 @@ class Tabloid::Row
 
 
   def to_csv
-    FasterCSV.generate do |csv|
+    CSV.generate do |csv|
       csv_array = []
       @columns.each_with_index do |col, index|
         next if col.hidden?

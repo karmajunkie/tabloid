@@ -1,5 +1,6 @@
 require "builder"
 require 'yaml'
+require 'csv'
 
 module Tabloid
 end

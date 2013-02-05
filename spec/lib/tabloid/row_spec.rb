@@ -15,11 +15,11 @@ describe Tabloid::Row do
   context "producing output" do
     describe "#to_csv" do
       it "includes visible columns" do
-        rows = FasterCSV.parse(@row.to_csv)
+        rows = CSV.parse(@row.to_csv)
         rows.first.should include("2")
       end
       it "does not include hidden columns" do
-        rows = FasterCSV.parse(@row.to_csv)
+        rows = CSV.parse(@row.to_csv)
         rows.first.should_not include("1")
       end
     end
@@ -76,7 +76,7 @@ describe Tabloid::Row do
       end
 
       it "should apply custom format to values for csv output format" do
-        row = FasterCSV.parse(Tabloid::Row.new(:columns => columns, :data => [1, 2]).to_csv).first
+        row = CSV.parse(Tabloid::Row.new(:columns => columns, :data => [1, 2]).to_csv).first
         row.last.should == "Formatted value 2"
       end
 
@@ -93,7 +93,7 @@ describe Tabloid::Row do
       end
 
       it "should can use row values for csv output format" do
-        row = FasterCSV.parse(Tabloid::Row.new(:columns => columns, :data => [1, 2]).to_csv).first
+        row = CSV.parse(Tabloid::Row.new(:columns => columns, :data => [1, 2]).to_csv).first
         row.last.should == "Value 2, Row 1 2"
       end
 

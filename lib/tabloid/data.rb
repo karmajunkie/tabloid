@@ -75,7 +75,7 @@ module Tabloid
     end
 
     def header_csv
-      FasterCSV.generate do |csv|
+      CSV.generate do |csv|
         csv << @report_columns.map(&:to_header)
       end
     end

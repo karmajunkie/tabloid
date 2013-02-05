@@ -151,13 +151,20 @@ module Tabloid::Report
     end
 
     def to_csv
-      params_csv + data.to_csv
+      pcsv = params_csv
+      if pcsv
+        pcsv + data.to_csv
+      else
+        data.to_csv
+      end
     end
 
     def params_csv
-      FasterCSV.generate do |csv|
-        formatted_parameters.to_a.each{ |report_param| csv << report_param }
-        csv << []
+      unless formatted_parameters.empty?
+        CSV.generate do |csv|
+          formatted_parameters.to_a.each{ |report_param| csv << report_param } 
+          csv << []
+        end
       end
     end
 

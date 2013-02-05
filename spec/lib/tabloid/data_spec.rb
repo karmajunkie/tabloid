@@ -29,7 +29,7 @@ describe Tabloid::Data do
       context "[summary options is presented]" do
         let(:data){ Tabloid::Data.new(:report_columns => columns, :rows => rows, :summary => { :col2 => :sum } )}
         it "adds a totals row to the csv output" do
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.should include(["Totals", nil])
           csv_rows.should include([nil, "6"])
         end
@@ -47,7 +47,7 @@ describe Tabloid::Data do
                             :summary => { :col2 => :sum }
         end
         it "should handle nil value" do
-          csv_rows = FasterCSV.parse data.to_csv
+          csv_rows = CSV.parse data.to_csv
           csv_rows.should include(["Totals", nil])
           csv_rows.should include([nil, "5"])
         end
@@ -56,7 +56,7 @@ describe Tabloid::Data do
         let(:data) { Tabloid::Data.new(:report_columns => columns, :rows => rows ) }
 
         it "should not add total row to the csv output" do
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.flatten.should_not include("Totals")
         end
 
@@ -74,7 +74,7 @@ describe Tabloid::Data do
                             :grouping_options => { :cardinality => 'foo' })
         end
         it "adds a totals row with cardinality info to the csv output" do
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.should include(["Totals (2 foos)", nil])
         end
       end
@@ -86,7 +86,7 @@ describe Tabloid::Data do
                             :grouping_options => { :label => lambda{|val| val.to_s + '_label_added'} })
         end
         it "changes default label" do
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.should include(["1_label_added", nil])
           csv_rows.should include(["3_label_added", nil])
         end
@@ -103,7 +103,7 @@ describe Tabloid::Data do
                                    :rows => rows,
                                    :grouping_key => :col1,
                                    :grouping_options => { :cardinality => 'foo' })
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.should include(["Totals (2 foos)", nil])
         end
         it "takes into account grammatical number" do
@@ -111,14 +111,14 @@ describe Tabloid::Data do
                                    :rows => [[1, 2]],
                                    :grouping_key => :col1,
                                    :grouping_options => { :cardinality => 'foo' })
-          csv_rows = FasterCSV.parse(data.to_csv)
+          csv_rows = CSV.parse(data.to_csv)
           csv_rows.should include(["Totals (1 foo)", nil])
         end
       end
       context "[empty report]" do
         before do
           data = Tabloid::Data.new(:report_columns => columns, :rows => [], :summary => { :col2 => :sum } )
-          @csv_rows = FasterCSV.parse(data.to_csv)
+          @csv_rows = CSV.parse(data.to_csv)
         end
 
         it "should add blank total value in csv output" do

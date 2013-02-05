@@ -8,7 +8,7 @@ module Tabloid
 
     private
     def humanize(string)
-      "#{string.first.upcase}#{string[1..-1]}".gsub("_", " ")
+      string.capitalize.gsub("_", " ")
     end
 
   end

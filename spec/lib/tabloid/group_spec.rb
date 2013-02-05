@@ -18,7 +18,7 @@ describe Tabloid::Group do
 
   describe "producing output" do
     describe "as CSV" do
-      let(:rows) { FasterCSV.parse(group.to_csv) }
+      let(:rows) { CSV.parse(group.to_csv) }
       it "includes all rows for the group" do
         rows.should include(["1", "2"])
         rows.should include(["3", "4"])
@@ -27,7 +27,7 @@ describe Tabloid::Group do
         rows.should include(["foobar", nil])
       end
       it "doesn't include a label row when label is falsey" do
-        rows = FasterCSV.parse(anon_group.to_csv)
+        rows = CSV.parse(anon_group.to_csv)
         rows.should_not include(["foobar", nil])
       end
     end
@@ -81,17 +81,17 @@ describe Tabloid::Group do
       let(:row2) { Tabloid::Row.new(:columns => columns, :data => [3, 4]) }
       it "adds cardinality info to a group label" do
         group = Tabloid::Group.new(:rows => [row1, row2], :columns => columns, :label => "foobar", :cardinality => 'foo')
-        rows = FasterCSV.parse(group.to_csv)
+        rows = CSV.parse(group.to_csv)
         rows.first.should == ["foobar (2 foos)", nil]
       end
       it "shows cardinality even if a group label isn't provided'" do
         group = Tabloid::Group.new(:rows => [row1, row2], :columns => columns, :cardinality => 'foo')
-        rows = FasterCSV.parse(group.to_csv)
+        rows = CSV.parse(group.to_csv)
         rows.first.should == ["2 foos", nil]
       end
       it "takes into account grammatical number" do
         group = Tabloid::Group.new(:rows => [row1], :columns => columns, :cardinality => 'foo')
-        rows = FasterCSV.parse(group.to_csv)
+        rows = CSV.parse(group.to_csv)
         rows.first.should == ["1 foo", nil]
       end
     end

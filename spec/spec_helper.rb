@@ -3,4 +3,7 @@ require 'dalli'
 
 require 'ostruct'
 require 'nokogiri'
-require 'fastercsv'
+require 'csv'
+require 'mock_redis'
+
+Redis = MockRedis
