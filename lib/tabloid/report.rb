@@ -113,13 +113,13 @@ module Tabloid::Report
     EOS
 
     def prepare(options={})
-      before_prepare if self.respond_to?(:before_prepare)
       @report_parameters = {}
       parameters.each do |param|
         value = options.delete param.key
         raise Tabloid::MissingParameterError.new("Must supply :#{param.key} when creating the report") if value.nil?
         @report_parameters[param.key] = value
       end
+      before_prepare if self.respond_to?(:before_prepare)
       data
       after_prepare if self.respond_to?(:after_prepare)
 
