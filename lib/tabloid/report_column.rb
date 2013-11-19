@@ -14,15 +14,10 @@ module Tabloid
       @hidden =  options[:hidden]
       @total = options[:total]
       @formatter = options[:formatter]
-      @formatting_by = options[:formatting_by]
       @html = options[:html] || {}
 
       unless @formatter.nil?
-        raise FormatterError, "formatter or formatting_by is not specified" unless @formatting_by
-        raise FormatterError, "formatter method doesn't supported by formatting_by" unless @formatting_by.respond_to?(@formatter)
-
-        method = @formatting_by.method(@formatter)
-        raise FormatterError, "Incorrect formatter arity: #{method.arity}" unless method.arity == 1 || method.arity == 2
+        raise FormatterError, "Formatter receives one or two parameters" unless [1,2].include?(@formatter.arity)
       end
     end
 
@@ -39,7 +34,7 @@ module Tabloid
     end
 
     def with_format?
-      @formatter && @formatting_by
+      !@formatter.nil?
     end
 
     def to_header
@@ -48,8 +43,7 @@ module Tabloid
     end
 
     def format(value, row)
-      method = @formatting_by.method(@formatter)
-      method.arity == 1 ? method.call(value) : method.call(value, row)
+      @formatter.arity == 1 ? @formatter.call(value) : @formatter.call(value, row)
     end
   end
 end
