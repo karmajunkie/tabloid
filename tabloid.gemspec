@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.add_development_dependency "rspec"
   s.add_development_dependency "nokogiri"
-  s.add_development_dependency "dalli"
+  s.add_runtime_dependency "virtus"
   s.add_runtime_dependency "builder"
   s.add_runtime_dependency "pdfkit"
 end

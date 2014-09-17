@@ -16,9 +16,6 @@ module Tabloid
       @formatter = options[:formatter]
       @html = options[:html] || {}
 
-      unless @formatter.nil?
-        raise FormatterError, "Formatter receives one or two parameters" unless [1,2].include?(@formatter.arity)
-      end
     end
 
     def to_s

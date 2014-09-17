@@ -4,33 +4,14 @@ module Tabloid::Report
 
   def self.included(base)
     base.class_eval do
+      include Virtus.model lazy: false
       extend Tabloid::Report::ClassMethods
+      extend Tabloid::Parameters
       include Tabloid::Report::InstanceMethods
     end
   end
 
   module ClassMethods
-    def parameter(*args)
-      set_parameter Tabloid::Parameter.new(*args)
-    end
-    
-    def set_parameter(param)
-      parameters_initialize
-      @report_parameters << param
-    end
-
-    def parameters_initialize
-      @report_parameters ||= []
-    end
-
-    def store_parameters(attribute)
-
-    end
-
-    def parameters
-      @report_parameters
-    end
-
     def summary(summary_options = {})
       @summary_options = summary_options
     end
@@ -54,7 +35,6 @@ module Tabloid::Report
     end
 
     def rows(*args, &block)
-      parameters_initialize
       @rows_block = block
     end
 
@@ -63,7 +43,7 @@ module Tabloid::Report
       updated_options.update(:formatting_by => @formatting_by) if options[:formatting_by].nil?
       set_element Tabloid::ReportColumn.new(key, label, updated_options)
     end
-    
+
     def set_element(elem)
       columns_initialize
       @report_columns << elem
@@ -162,7 +142,7 @@ module Tabloid::Report
     def params_csv
       unless formatted_parameters.empty?
         CSV.generate do |csv|
-          formatted_parameters.to_a.each{ |report_param| csv << report_param } 
+          formatted_parameters.to_a.each{ |report_param| csv << report_param }
           csv << []
         end
       end
@@ -288,7 +268,7 @@ module Tabloid::Report
       end
       html.to_s
     end
-    
+
     def formatted_parameters
       displayed_parameters.map{ |param| [param.label, format_parameter(param)] }
     end
@@ -301,7 +281,7 @@ module Tabloid::Report
       params = self.parameters.select { |param| displayed?(param) }
       params
     end
-    
+
     def displayed?(param)
       true
     end

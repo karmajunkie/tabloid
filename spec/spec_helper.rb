@@ -1,9 +1,5 @@
-require 'tabloid'
-require 'dalli'
-
 require 'ostruct'
+require 'byebug'
 require 'nokogiri'
 require 'csv'
-require 'mock_redis'
-
-Redis = MockRedis
+require 'tabloid'
