@@ -7,6 +7,7 @@ module Tabloid::Report
       include Virtus.model lazy: false
       extend Tabloid::Report::ClassMethods
       extend Tabloid::Parameters
+      extend Tabloid::Elements
       include Tabloid::Report::InstanceMethods
     end
   end

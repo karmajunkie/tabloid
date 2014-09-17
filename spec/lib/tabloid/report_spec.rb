@@ -7,7 +7,7 @@ class TestReport
   ]
   include Tabloid::Report
 
-  parameter :param1, "TestParameter"
+  parameter :param1
 
   element :col1, 'Col1'
   element :col2
