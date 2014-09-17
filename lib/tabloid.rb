@@ -11,10 +11,11 @@ end
 
 require 'tabloid/configuration'
 require 'tabloid/header_row'
+require 'tabloid/element_collection'
+require 'tabloid/elements'
 require 'tabloid/parameters'
 require 'tabloid/parameter'
 require 'tabloid/report'
-require 'tabloid/column_extensions'
 require 'tabloid/report_column'
 require 'tabloid/row'
 require 'tabloid/group'
