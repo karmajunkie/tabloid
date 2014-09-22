@@ -20,7 +20,7 @@ describe Tabloid::Parameters do
 
   it 'allows for non-required parameters' do
     klass = new_class
-    klass.parameter :foo, nil, required: false
+    klass.parameter :foo, required: false
     klass.new.parameters_valid?.should == true
   end
 

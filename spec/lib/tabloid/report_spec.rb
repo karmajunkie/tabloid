@@ -52,4 +52,17 @@ describe Tabloid::Report do
       expect(subject.elements[:col1]).not_to be_nil
     end
   end
+
+  #class's rows
+  describe 'compiling data' do
+    it "allows an enumerable to be returned"
+    it "allows a SQL string to be returned"
+  end
+
+  #instance rows
+  describe 'reading data' do
+    #given report data is available as an array of keyed lookup structures (e.g. hash),
+    #instance.rows should return a report row object for each element of the array
+  end
+
 end

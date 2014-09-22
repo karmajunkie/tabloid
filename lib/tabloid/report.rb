@@ -1,20 +1,23 @@
 require 'pdfkit'
 
 module Tabloid::Report
-
   def self.included(base)
     base.class_eval do
       include Virtus.model lazy: false
       extend Tabloid::Report::ClassMethods
       extend Tabloid::Parameters
       extend Tabloid::Elements
+      extend Tabloid::Rendering
       include Tabloid::Report::InstanceMethods
     end
   end
 
   module ClassMethods
-    def summary(summary_options = {})
-      @summary_options = summary_options
+    def configuration
+      @config ||= ReportConfiguration.new(
+        self.parameters,
+        self.elements
+      )
     end
 
     def report_columns
@@ -37,24 +40,6 @@ module Tabloid::Report
 
     def rows(*args, &block)
       @rows_block = block
-    end
-
-    def element(key, label = "", options={})
-      updated_options = options.dup
-      updated_options.update(:formatting_by => @formatting_by) if options[:formatting_by].nil?
-      set_element Tabloid::ReportColumn.new(key, label, updated_options)
-    end
-
-    def set_element(elem)
-      columns_initialize
-      @report_columns << elem
-    end
-
-    def columns_initialize
-      if @report_columns.nil?
-        @report_columns    = []
-        @report_columns.extend Tabloid::ColumnExtensions
-      end
     end
 
     def formatting_by(obj)

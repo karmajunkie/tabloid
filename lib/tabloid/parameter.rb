@@ -1,7 +1,7 @@
 module Tabloid
   class Parameter
     attr_accessor :key, :label
-    def initialize(key, label = nil )
+    def initialize(key, required: true)
       self.key = key
       self.label = label || humanize(key.to_s)
     end
@@ -10,6 +10,5 @@ module Tabloid
     def humanize(string)
       string.capitalize.gsub("_", " ")
     end
-
   end
 end

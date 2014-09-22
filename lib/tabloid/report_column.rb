@@ -12,10 +12,8 @@ module Tabloid
       self.key = key
       self.label = label
       @hidden =  options[:hidden]
-      @total = options[:total]
       @formatter = options[:formatter]
       @html = options[:html] || {}
-
     end
 
     def to_s
