@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Keith Gaddis"]
   s.email       = ["keith.gaddis@gmail.com"]
-  s.homepage    = "http://github.com/Inductive/tabloid"
+  s.homepage    = "http://github.com/karmajunkie/tabloid"
   s.summary     = %q{ Tabloid allows the creation of cacheable report data using a straightforward DSL and output to HTML, CSV, and more to come.}
   s.description = %q{ Tabloid allows the creation of cacheable report data using a straightforward DSL and output to HTML, CSV, and more to come.}
 
@@ -20,7 +20,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.add_development_dependency "rspec"
   s.add_development_dependency "nokogiri"
+  s.add_development_dependency "activerecord", ">=3.0"
+  s.add_development_dependency "sqlite3"
   s.add_runtime_dependency "virtus"
   s.add_runtime_dependency "builder"
-  s.add_runtime_dependency "pdfkit"
 end

@@ -1,13 +1,21 @@
 module Tabloid
   class ElementCollection < Array
     def <<(element)
-      @keys ||= Hash.new
-      @keys[element.key] = self.count
+      push(element)
+    end
+    def push(element)
+      keys[element.key.to_s] = self.count-1
       super
     end
 
     def [](key)
-      super(@keys[key])
+      return super(keys[key.to_s]) if keys.has_key?(key.to_s)
+      super
+    end
+
+    private
+    def keys
+      @keys ||= Hash.new
     end
   end
 end
