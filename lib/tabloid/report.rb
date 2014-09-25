@@ -34,11 +34,9 @@ module Tabloid::Report
       @cache_block
     end
 
-    def rows_block
-      @rows_block
-    end
-
     def rows(*args, &block)
+      define_method :rows_definition, &block
+
       @rows_block = block
     end
 
@@ -66,30 +64,12 @@ module Tabloid::Report
 
   module InstanceMethods
 
-    HTML_FRAME =<<-EOS
-      <html>
-        <header>
-        </header>
-        <body>
-          <div id='report'>
-            %s
-          </div>
-        </body>
-      </html>
-    EOS
+    def records
+      source = rows
+    end
 
-    def prepare(options={})
-      @report_parameters = {}
-      parameters.each do |param|
-        value = options.delete param.key
-        raise Tabloid::MissingParameterError.new("Must supply :#{param.key} when creating the report") if value.nil?
-        @report_parameters[param.key] = value
-      end
-      before_prepare if self.respond_to?(:before_prepare)
-      data
-      after_prepare if self.respond_to?(:after_prepare)
-
-      self
+    def record_count
+      records.count
     end
 
     def report_columns
@@ -111,123 +91,10 @@ module Tabloid::Report
       @data
     end
 
-    def to_html
-      table_string = "<table id='#{generate_html_id}_table'>#{data.to_html}</table>"
-      parameter_info_html + table_string
-    end
-
-    def to_csv
-      pcsv = params_csv
-      if pcsv
-        pcsv + data.to_csv
-      else
-        data.to_csv
-      end
-    end
-
-    def params_csv
-      unless formatted_parameters.empty?
-        CSV.generate do |csv|
-          formatted_parameters.to_a.each{ |report_param| csv << report_param }
-          csv << []
-        end
-      end
-    end
-
-    def to_pdf
-      kit = PDFKit.new(to_complete_html)
-      kit.stylesheets << File.expand_path("../../static/report.pdf.css", File.dirname(__FILE__))
-      kit.to_pdf
-    end
-
-    def cache_key
-      @key ||= begin
-        if self.class.cache_key_block
-          self.instance_exec &self.class.cache_key_block
-        else
-          nil
-        end
-      end
-    end
-
-
     private
 
     def to_complete_html
       HTML_FRAME % [ self.to_html]
-    end
-
-    def cache_data(data)
-      if Tabloid.cache_enabled?
-        raise Tabloid::MissingParameterError.new("Must supply a cache_key block when caching is enabled") unless self.class.cache_key_block
-
-        report_data = {
-            :parameters => @report_parameters,
-            :data       => data
-        }
-
-        raise "Unable to cache data" unless cache_client.set(cache_key, YAML.dump(report_data))
-
-      end
-      data
-    end
-
-    def load_from_cache
-      if Tabloid.cache_enabled? && !@cached_data
-        @cached_data = read_from_cache
-        if @cached_data
-          @cached_data        = YAML.load(@cached_data)
-          @data              = @cached_data[:data]
-          @report_parameters = @cached_data[:parameters]
-        end
-      end
-    end
-
-
-    def cache_client
-      if Tabloid.cache_enabled?
-        server = Tabloid.cache_connection_options[:server] || 'localhost'
-        if Tabloid.cache_engine == :memcached
-          port          = Tabloid.cache_connection_options[:port] || '11211'
-          @cache_client ||= Dalli::Client.new("#{server}:#{port}")
-        elsif Tabloid.cache_engine == :redis
-          port          = Tabloid.cache_connection_options[:port] || '6379'
-          @cache_client ||= Redis.new(
-              :host => server,
-              :port => port)
-        end
-      end
-    end
-
-    def build_and_cache_data
-      @data ||= begin
-        report_data = Tabloid::Data.new(
-            :report_columns   => self.report_columns,
-            :rows             => prepare_data,
-            :grouping_key     => grouping_key,
-            :grouping_options => grouping_options,
-            :summary          => summary_options
-        )
-        cache_data(report_data)
-        report_data
-      end
-    end
-
-
-    def prepare_data
-      row_data = instance_exec(&self.class.rows_block)
-      #unless row_data.first.is_a? Array
-      #  row_data.map! do |row|
-      #    report_columns.map do |col|
-      #      row.send(col.key).to_s
-      #    end
-      #  end
-      #end
-      row_data
-    end
-
-    def read_from_cache
-      cache_client.get(cache_key) if cache_client && cache_key
     end
 
     def grouping_options

@@ -12,10 +12,6 @@ class TestReport
   element :col1, 'Col1'
   element :col2
 
-  rows do
-    TestReport::DATA
-  end
-
   def name
     "Report"
   end
@@ -55,8 +51,31 @@ describe Tabloid::Report do
 
   #class's rows
   describe 'compiling data' do
-    it "allows an enumerable to be returned"
-    it "allows a SQL string to be returned"
+    context "with ActiveRecord::Relation present" do
+      TestReport.class_eval do
+        def rows
+
+        end
+      end
+      it "uses the relation as the source of SQL" do
+      end
+    end
+    context "with a raw enumerable returned" do
+      TestReport.class_eval do
+        def rows
+          return TestReport::DATA
+        end
+      end
+      it "allows an enumerable to be returned" do
+        expect(TestReport.new.records).to eq(TestReport::DATA)
+      end
+      it "can give a record count" do
+        expect(TestReport.new.record_count).to eq(TestReport::DATA.count)
+      end
+    end
+    context "when a SQL adapter is defined" do
+      it "allows a SQL string to be returned"
+    end
   end
 
   #instance rows
