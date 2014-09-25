@@ -8,11 +8,6 @@ module Tabloid
 
     def element(key, label = nil, options={})
       #hand-rolled version of titleize from active support
-      label ||= key.to_s.
-        gsub(/(\w)(\d+)/){ "#{$1} #{$2}" }.
-        split(/[_\s]/).
-        map(&:capitalize).
-        join(" ")
       elements << Tabloid::ReportColumn.new(key, label, options)
     end
 

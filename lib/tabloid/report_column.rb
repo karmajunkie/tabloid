@@ -8,9 +8,9 @@ module Tabloid
 
     class FormatterError < RuntimeError; end
 
-    def initialize(key, label = "", options={})
-      self.key = key
-      self.label = label
+    def initialize(key, label = nil, options={})
+      self.key = key.to_s
+      self.label = label || humanize(self.key)
       @hidden =  options[:hidden]
       @formatter = options[:formatter]
       @html = options[:html] || {}
@@ -39,6 +39,16 @@ module Tabloid
 
     def format(value, row)
       @formatter.arity == 1 ? @formatter.call(value) : @formatter.call(value, row)
+    end
+
+    private
+    def humanize(str)
+      str.
+        gsub(/(\w)(\d+)/){ "#{$1} #{$2}" }.
+        gsub(/([a-z])([A-Z])/){"#{$1} #{$2}"}.
+        split(/[_\s]/).
+        map(&:capitalize).
+        join(" ")
     end
   end
 end
