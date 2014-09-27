@@ -1,5 +1,3 @@
-require 'pdfkit'
-
 module Tabloid::Report
   def self.included(base)
     base.class_eval do
@@ -36,8 +34,6 @@ module Tabloid::Report
 
     def rows(*args, &block)
       define_method :rows_definition, &block
-
-      @rows_block = block
     end
 
     def formatting_by(obj)
@@ -65,11 +61,41 @@ module Tabloid::Report
   module InstanceMethods
 
     def records
-      source = rows
+      @records ||= if to_sql
+        execute_sql(to_sql)
+      else
+        row_data
+      end
+    end
+
+    def execute_sql(sql)
+      ActiveRecord::Base.connection.execute(sql)
     end
 
     def record_count
-      records.count
+      rows_definition.count
+    end
+
+    def row_data
+      @row_data ||= rows_definition
+    end
+
+    def to_sql
+      @sql ||= if row_data.is_a?(String)
+        finalize_sql(row_data)
+      elsif row_data.respond_to?(:to_sql)
+        finalize_sql(row_data.to_sql)
+      end
+    end
+
+    def finalize_sql(sql)
+      params = self.attributes
+      binds = []
+      sanitize_arr = [sql.gsub(/:([\S]*)/){|m| binds << self.send($1) and '?' if parameter_exists?($1)}]+binds
+      ActiveRecord::Base.send(:sanitize_sql_array, sanitize_arr)
+
+
+
     end
 
     def report_columns
@@ -78,11 +104,6 @@ module Tabloid::Report
 
     def parameters
       self.class.parameters
-    end
-
-    def parameter(key)
-      load_from_cache if Tabloid.cache_enabled?
-      @report_parameters[key] if @report_parameters
     end
 
     def data

@@ -18,6 +18,9 @@ module Tabloid
       self.attribute name, options.delete(:type), options
     end
     module InstanceMethods
+      def parameter_exists?(key)
+        parameters.detect{|p| p.key.to_s == key.to_s}
+      end
       def parameters_valid?
         self.class.required_params.detect{|p| self[p].nil? || self.nil == ''}.nil?
       end

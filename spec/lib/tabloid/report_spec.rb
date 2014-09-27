@@ -52,18 +52,22 @@ describe Tabloid::Report do
   #class's rows
   describe 'compiling data' do
     context "with ActiveRecord::Relation present" do
-      TestReport.class_eval do
-        def rows
-
-        end
-      end
+      let(:relation){Address.where(:city => "Hattiesburg")}
       it "uses the relation as the source of SQL" do
+        TestReport.class_eval do
+          rows do
+            Address.where(:city => "Hattiesburg")
+          end
+        end
+        expect(TestReport.new.row_data.to_sql).to eq(relation.to_sql)
       end
     end
     context "with a raw enumerable returned" do
-      TestReport.class_eval do
-        def rows
-          return TestReport::DATA
+      before do
+        TestReport.class_eval do
+          rows do
+            return TestReport::DATA
+          end
         end
       end
       it "allows an enumerable to be returned" do
@@ -74,7 +78,39 @@ describe Tabloid::Report do
       end
     end
     context "when a SQL adapter is defined" do
-      it "allows a SQL string to be returned"
+      before do
+        TestReport.class_eval do
+          rows do
+            "select * from addresses where city = :param1"
+          end
+        end
+      end
+      it "allows a SQL string to be returned" do
+        expect(TestReport.new.row_data).to match(/select \* from addresses/)
+      end
+
+      it "replaces parameters in the string" do
+        expect(TestReport.new(param1: "foo").to_sql).to eq("select * from addresses where city = 'foo'")
+      end
+
+      it "will replace parameters in the string in the correct order" do
+        klass = Class.new do
+          include Tabloid::Report
+          parameter :param1
+          parameter :param2
+          parameter :param4
+          parameter :param3
+          rows do
+            ":param1 :param3 :param4 :param2"
+          end
+        end
+
+        report = klass.new(param1: 'foo1', param2: 'foo2', param3: 'foo3', param4: 'foo4')
+        expect(report.to_sql).to eq(
+          "'foo1' 'foo3' 'foo4' 'foo2'"
+        )
+
+      end
     end
   end
 

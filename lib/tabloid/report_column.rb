@@ -6,8 +6,6 @@ module Tabloid
     attr_accessor :formatter
     attr_accessor :html
 
-    class FormatterError < RuntimeError; end
-
     def initialize(key, label = nil, options={})
       self.key = key.to_s
       self.label = label || humanize(self.key)
