@@ -7,7 +7,8 @@ class TestReport
   ]
   include Tabloid::Report
 
-  parameter :param1
+  parameter :param1, "Parameter 1"
+  parameter :required_param, required: true
 
   element :col1, 'Col1'
   element :col2
