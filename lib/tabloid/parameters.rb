@@ -12,8 +12,13 @@ module Tabloid
       @parameters ||= []
     end
     def parameter(name, label = nil, options = {})
+      unless (label.nil? || label.is_a?(String))
+        options = label 
+        label = nil
+      end
+      
       options[:required] = true unless options.has_key?(:required)
-      parameters.push(Parameter.new(name, label, required: options[:required]))
+      parameters.push(Parameter.new(name, label, type: options[:type], required: options[:required]))
       required_params.push(name) if options.delete(:required)
       self.attribute name, options.delete(:type), options
     end

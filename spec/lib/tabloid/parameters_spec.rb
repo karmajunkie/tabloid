@@ -9,7 +9,7 @@ describe Tabloid::Parameters do
 
   it "allows a class to define a parameter" do
     klass=new_class
-    klass.should respond_to(:parameter)
+    expect(klass).to respond_to(:parameter)
   end
 
   it "defaults to a required parameter" do
