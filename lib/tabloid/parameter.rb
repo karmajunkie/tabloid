@@ -4,7 +4,6 @@ module Tabloid
     attribute :key
     attribute :label
     attribute :type
-    attribute :type
 
     def initialize(key, label = nil, type: nil, required: true)
       self.key = key
