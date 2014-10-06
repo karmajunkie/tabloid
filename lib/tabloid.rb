@@ -10,7 +10,6 @@ module Tabloid
 end
 
 require 'tabloid/configuration'
-require 'tabloid/header_row'
 require 'tabloid/element_collection'
 require 'tabloid/elements'
 require 'tabloid/parameters'
@@ -22,5 +21,3 @@ require 'tabloid/rendering/processor'
 require 'tabloid/rendering/json_processor'
 require 'tabloid/rendering/html_processor'
 require 'tabloid/rendering'
-require 'tabloid/row'
-require 'tabloid/group'
