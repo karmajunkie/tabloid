@@ -2,8 +2,9 @@ module Tabloid
   class Parameter
     include Virtus.model
     attribute :key
-    attribute :label
+    attribute :label, String
     attribute :type
+    attribute :required, Boolean
 
     def initialize(key, label = nil, type: nil, required: true)
       self.key = key
