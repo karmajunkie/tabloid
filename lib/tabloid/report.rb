@@ -12,7 +12,7 @@ module Tabloid::Report
 
   module ClassMethods
     def configuration
-      @config ||= ReportConfiguration.new(
+      @config ||= Tabloid::ReportConfiguration.new(
         self.parameters,
         self.elements
       )
@@ -91,11 +91,16 @@ module Tabloid::Report
     def finalize_sql(sql)
       params = self.attributes
       binds = []
-      sanitize_arr = [sql.gsub(/:([\S]*)/){|m| binds << self.send($1) and '?' if parameter_exists?($1)}]+binds
+      sanitize_arr = [sql.gsub(/:(\w+):/) do |m|
+          if parameter_exists?($1)
+            binds << self.send($1)
+            '?'
+          else
+            m
+          end
+        end
+      ]+binds
       ActiveRecord::Base.send(:sanitize_sql_array, sanitize_arr)
-
-
-
     end
 
     def report_columns
@@ -113,22 +118,6 @@ module Tabloid::Report
     end
 
     private
-
-    def to_complete_html
-      HTML_FRAME % [ self.to_html]
-    end
-
-    def grouping_options
-      self.class.grouping_options
-    end
-
-    def grouping_key
-      self.class.grouping_key
-    end
-
-    def summary_options
-      self.class.summary_options
-    end
 
     def parameter_info_html
       html = Builder::XmlMarkup.new

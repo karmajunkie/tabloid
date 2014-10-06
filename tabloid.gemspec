@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "nokogiri"
   s.add_development_dependency "activerecord", ">=3.0"
   s.add_development_dependency "sqlite3"
-  s.add_runtime_dependency "virtus"
+  s.add_runtime_dependency "virtus", '~>1.0.3'
   s.add_runtime_dependency "builder"
 end

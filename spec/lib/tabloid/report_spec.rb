@@ -82,7 +82,7 @@ describe Tabloid::Report do
       before do
         TestReport.class_eval do
           rows do
-            "select * from addresses where city = :param1"
+            "select * from addresses where city = :param1:"
           end
         end
       end
@@ -94,6 +94,19 @@ describe Tabloid::Report do
         expect(TestReport.new(param1: "foo").to_sql).to eq("select * from addresses where city = 'foo'")
       end
 
+      it "does not replace tokens without a closing colon" do
+        klass = Class.new do
+          include Tabloid::Report
+          parameter :param1
+          rows do
+            ":param1"
+
+          end
+        end
+        report = klass.new(param1: "foo")
+        expect(report.to_sql).to eq(":param1")
+      end
+
       it "will replace parameters in the string in the correct order" do
         klass = Class.new do
           include Tabloid::Report
@@ -102,7 +115,7 @@ describe Tabloid::Report do
           parameter :param4
           parameter :param3
           rows do
-            ":param1 :param3 :param4 :param2"
+            ":param1: :param3: :param4: :param2:"
           end
         end
 
