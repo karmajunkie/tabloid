@@ -7,6 +7,7 @@ module Tabloid::Report
       extend Tabloid::Elements
       extend Tabloid::Rendering
       include Tabloid::Report::InstanceMethods
+      attribute :report_name, String
     end
   end
 
@@ -16,6 +17,14 @@ module Tabloid::Report
         self.parameters,
         self.elements
       )
+    end
+
+    def report_name(name)
+      @report_name = name
+    end
+
+    def name
+      @report_name
     end
 
     def report_columns

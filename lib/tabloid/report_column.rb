@@ -1,10 +1,9 @@
 module Tabloid
   class ReportColumn
-    attr_accessor :key
-    attr_accessor :label
-    attr_accessor :hidden
-    attr_accessor :formatter
-    attr_accessor :html
+    include Virtus.model
+    attribute :key
+    attribute :label
+    attribute :hidden
 
     def initialize(key, label = nil, options={})
       self.key = key.to_s
@@ -14,8 +13,12 @@ module Tabloid
       @html = options[:html] || {}
     end
 
+    def name
+      key
+    end
+
     def to_s
-      @key.to_s
+      name
     end
 
     def total?
@@ -26,17 +29,9 @@ module Tabloid
       hidden
     end
 
-    def with_format?
-      !@formatter.nil?
-    end
-
     def to_header
       return self.label if label
       self.key
-    end
-
-    def format(value, row)
-      @formatter.arity == 1 ? @formatter.call(value) : @formatter.call(value, row)
     end
 
     private
