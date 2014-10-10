@@ -101,7 +101,7 @@ module Tabloid::Report
       params = self.attributes
       binds = []
       sanitize_arr = [sql.gsub(/:(\w+):/) do |m|
-          if parameter_exists?($1)
+          if parameter_exists?($1) || respond_to?($1)
             binds << self.send($1)
             '?'
           else
