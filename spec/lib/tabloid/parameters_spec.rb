@@ -15,13 +15,26 @@ describe Tabloid::Parameters do
   it "defaults to a required parameter" do
     klass = new_class
     klass.parameter :foo
-    klass.new.parameters_valid?.should == false
+    expect(klass.new.parameters_valid?).to eq(false)
   end
 
   it 'allows for non-required parameters' do
     klass = new_class
     klass.parameter :foo, required: false
     klass.new.parameters_valid?.should == true
+  end
+
+  describe 'types' do
+    it "accepts a type for the parameter" do
+      klass = new_class
+      klass.parameter :foo, type: Time
+      expect(klass.parameters.count).to eq(1)
+    end
+    it "returns the type as a string representation on the parameter" do 
+      klass = new_class
+      klass.parameter :foo, type: Time
+      expect(klass.parameters.first.type).to eq("datetime")
+    end
   end
 
 end
