@@ -1,5 +1,6 @@
 require 'tabloid/rendering/json_processor'
 require 'tabloid/rendering/html_processor'
+require 'tabloid/rendering/csv_processor'
 module Tabloid
   module Rendering
     def render_formats
@@ -17,6 +18,8 @@ module Tabloid
       end
       base.render :html, with: HTMLProcessor
       base.render :json, with: JsonProcessor
+      base.render :csv, with: CSVProcessor
+
     end
 
     module InstanceMethods
