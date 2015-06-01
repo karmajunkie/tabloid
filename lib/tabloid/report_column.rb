@@ -4,13 +4,15 @@ module Tabloid
     attribute :key
     attribute :label
     attribute :hidden
+    attribute :options
 
     def initialize(key, label = nil, options={})
       self.key = key.to_s
       self.label = label || humanize(self.key)
-      @hidden =  options[:hidden]
-      @formatter = options[:formatter]
-      @html = options[:html] || {}
+      @hidden =  options.delete(:hidden)
+      @formatter = options.delete(:formatter)
+      @html = options.delete(:html) || {}
+      @options = options
     end
 
     def name
