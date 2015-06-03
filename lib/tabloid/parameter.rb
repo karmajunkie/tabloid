@@ -5,8 +5,14 @@ module Tabloid
     attribute :label, String
     attribute :type
     attribute :required, Boolean
+    attribute :options, Hash, default: proc{Hash.new}
 
-    def initialize(key, label = nil, type: nil, required: true)
+    def initialize(key, label = nil,  options={})
+      #type: nil, required: true,
+      type = options.delete(:type)
+      required = options.delete(:required) || true
+
+      self.options = options
       self.type = type_class_to_string(type)
       self.key = key
       self.label = label || humanize(key.to_s)
@@ -20,7 +26,7 @@ module Tabloid
     def type_class_to_string(klass)
       return klass if klass.eql?(String)
       return 'string' if klass.nil?
-      return 'string' if klass.eql?(String); 
+      return 'string' if klass.eql?(String);
       return 'datetime' if klass.eql?(Time) || klass.eql?(Date)
       return 'integer' if klass.eql?(Integer) || klass.eql?(Bignum)
       return 'range' if klass.eql?(Range)
